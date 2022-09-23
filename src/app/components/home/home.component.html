@@ -1,0 +1,97 @@
+<p-messages [value]="msgs" [enableService]="false"></p-messages>
+<p-toolbar styleClass="p-mb-2">
+  <ng-template pTemplate="left">
+    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button success p-mr-4" (click)="openNew()"></button>
+    <!-- <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button> -->
+  </ng-template>
+  <ng-template pTemplate="right">
+    <!-- <div><p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="p-mr-2 p-d-inline-block px-6"></p-fileUpload></div> -->
+    <!-- <div><button pButton pRipple label="Export" icon="pi pi-upload" (click )="exportExcel()"class="px-6 p-button-help"></button></div> -->
+  </ng-template>
+</p-toolbar>
+<p-table styleClass="p-datatable-customers"[columns]="selectedColumns" [value]="employees" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,25,50]">
+  <ng-template pTemplate="caption">
+    <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+      selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns">
+    </p-multiSelect>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th>Code</th>
+      <th *ngFor="let col of columns">
+        {{col.header}}
+      </th>
+      <th>
+        Options
+      </th>
+    </tr>
+
+  </ng-template>
+  <ng-template pTemplate="body" let-employee let-columns="columns">
+    <tr>
+      <td>{{employee.employee_code}}</td>
+      <td *ngFor="let col of columns">
+        {{employee[col.field]}}
+      </td>
+      <td>
+        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning p-mr-2"
+          (click)="editProduct(employee)"></button>
+        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+          (click)="deleteProduct(employee)"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Employee Details" [modal]="true"
+  styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <div class="p-field">
+      <label for="first_name">First Name</label>
+      <input type="text" pInputText id="first_name" [(ngModel)]="employee.first_name" required autofocus />
+      <small class="p-invalid" *ngIf="submitted && !employee.first_name">Name is required.</small>
+    </div>
+    <div class="p-field">
+      <label for="last_name">Last Name</label>
+      <input type="text" pInputText id="last_name" [(ngModel)]="employee.last_name" required />
+      <small class="p-invalid" *ngIf="submitted && !employee.last_name">Last Name is required.</small>
+    </div>
+    <div class="p-field">
+      <label for="description">Description</label>
+      <textarea id="description" pInputTextarea [(ngModel)]="employee.description" required rows="3"
+        cols="20"></textarea>
+    </div>
+    <div class="p-field">
+      <label class="p-mb-3">Status employee</label>
+      <div class="p-formgrid p-grid">
+        <div class="p-field-radiobutton p-col-6">
+          <p-radioButton id="status1" name="status" value="ACTIVE" [(ngModel)]="employee.status"></p-radioButton>
+          <label for="category1">Active</label>
+        </div>
+        <div class="p-field-radiobutton p-col-6">
+          <p-radioButton id="status2" name="status" value="INACTIVE" [(ngModel)]="employee.status"></p-radioButton>
+          <label for="category2">Inactive</label>
+        </div>
+        <div class="p-field-radiobutton p-col-6">
+          <p-radioButton id="status3" name="status" value="FIRED" [(ngModel)]="employee.status"></p-radioButton>
+          <label for="category3">Fired</label>
+        </div>
+        <div class="p-field-radiobutton p-col-6">
+          <p-radioButton id="status4" name="status" value="UNEMPLOYEE" [(ngModel)]="employee.status"></p-radioButton>
+          <label class="p-mr-4" for="category4">Unemployee</label>
+        </div>
+      </div>
+    </div>
+    <div class="p-field">
+      <label for="icon">Start Date</label>
+      <p-calendar [(ngModel)]="employee.init_date" [showIcon]="true" inputId="icon" dateFormat="dd/mm/yy"></p-calendar>
+      <small class="p-invalid" *ngIf="submitted && !employee.init_date">Init Date is required.</small>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"></p-confirmDialog>
